@@ -1,0 +1,272 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FloraGuard | IoT Innovation Hub</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .glass { background: rgba(255, 255, 255, 0.95); backdrop-filter: blur(10px); }
+        .bg-gradient { background: linear-gradient(135deg, #f0f9ff 0%, #e1ffed 100%); }
+        .hidden-section { display: none !important; }
+        .active-link { color: #10b981; font-weight: bold; border-bottom: 2px solid #10b981; }
+        .animate-float { animation: float 3s ease-in-out infinite; }
+        @keyframes float { 0% { transform: translateY(0px); } 50% { transform: translateY(-10px); } 100% { transform: translateY(0px); } }
+        /* Modal Transition */
+        #project-modal { transition: opacity 0.3s ease; }
+    </style>
+</head>
+<body class="bg-gradient min-h-screen font-sans text-gray-800">
+
+    <!-- Navigation -->
+    <nav class="glass sticky top-0 z-50 border-b border-green-100 px-6 py-4 flex justify-between items-center">
+        <div class="flex items-center gap-2 cursor-pointer" onclick="showPage('home')">
+            <div class="bg-green-600 p-2 rounded-xl text-white shadow-lg">
+                <i class="fas fa-microchip text-xl"></i>
+            </div>
+            <h1 class="text-2xl font-bold text-green-900">FloraGuard</h1>
+        </div>
+        <div class="hidden md:flex items-center gap-8">
+            <span onclick="showPage('home')" id="nav-home" class="cursor-pointer hover:text-green-600 active-link">Home</span>
+            <span onclick="showPage('dashboard')" id="nav-dashboard" class="cursor-pointer hover:text-green-600">Dashboard</span>
+            <div id="auth-controls">
+                <button id="btn-signin" onclick="showPage('login')" class="bg-green-600 text-white px-6 py-2 rounded-full hover:bg-green-700 transition">Sign In</button>
+                <div id="logged-in-user" class="hidden-section flex items-center gap-4">
+                    <span class="text-sm font-medium">Hello, <b>Alex</b></span>
+                    <button onclick="handleLogout()" class="text-red-500 text-xs font-bold uppercase">Logout</button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- PROJECT MODAL (HIDDEN BY DEFAULT) -->
+    <div id="project-modal" class="hidden-section fixed inset-0 z-[100] flex items-center justify-center p-4">
+        <div onclick="closeModal()" class="absolute inset-0 bg-gray-900/60 backdrop-blur-sm"></div>
+        <div class="bg-white relative w-full max-w-2xl rounded-[2.5rem] shadow-2xl overflow-hidden animate-fadeIn">
+            <button onclick="closeModal()" class="absolute top-6 right-6 text-gray-400 hover:text-gray-900 z-10"><i class="fas fa-times text-2xl"></i></button>
+            <div id="modal-image" class="h-48 w-full bg-cover bg-center"></div>
+            <div class="p-8">
+                <div class="flex items-center gap-3 mb-4">
+                    <span id="modal-badge" class="px-3 py-1 rounded-lg text-[10px] font-bold text-white uppercase tracking-widest"></span>
+                    <h3 id="modal-title" class="text-3xl font-black text-gray-900"></h3>
+                </div>
+                <p id="modal-desc" class="text-gray-600 leading-relaxed mb-6"></p>
+                
+                <div class="grid grid-cols-2 gap-6 mb-8">
+                    <div>
+                        <h4 class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3">Core Tech Stack</h4>
+                        <ul id="modal-tech" class="space-y-2 text-sm font-medium text-gray-700"></ul>
+                    </div>
+                    <div>
+                        <h4 class="text-xs font-bold text-gray-400 uppercase tracking-widest mb-3">Key Capabilities</h4>
+                        <ul id="modal-features" class="space-y-2 text-sm text-gray-600"></ul>
+                    </div>
+                </div>
+                <div id="modal-action-box"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- HOME PAGE -->
+    <section id="home-page" class="animate-fadeIn">
+        <header class="max-w-7xl mx-auto px-6 py-20 flex flex-col md:flex-row items-center gap-12">
+            <div class="flex-1 space-y-6">
+                <h2 class="text-6xl font-black text-gray-900 leading-tight tracking-tight">Digital Roots for <br><span class="text-green-600">Smart Gardens.</span></h2>
+                <p class="text-xl text-gray-600">Bridging the gap between IoT engineering and botanical health. Explore our ecosystem of open-source plant projects.</p>
+                <button onclick="showPage('dashboard')" class="bg-green-600 text-white px-10 py-5 rounded-2xl font-bold shadow-xl shadow-green-100">Launch App</button>
+            </div>
+            <div class="flex-1"><img src="https://images.unsplash.com/photo-1592150621744-aca64f48394a?auto=format&fit=crop&w=600&q=80" class="rounded-[3rem] shadow-2xl animate-float"></div>
+        </header>
+
+        <!-- PROJECT ECOSYSTEM -->
+        <section class="bg-white py-24 border-y border-gray-100">
+            <div class="max-w-7xl mx-auto px-6">
+                <h3 class="text-3xl font-black mb-12 italic">The Ecosystem</h3>
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+                    <!-- Project Cards -->
+                    <div onclick="openProjectModal('monitor')" class="group relative rounded-3xl overflow-hidden cursor-pointer shadow-lg hover:shadow-2xl transition-all">
+                        <img src="https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?auto=format&fit=crop&w=500&q=80" class="w-full h-80 object-cover group-hover:scale-105 transition">
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/80 p-6 flex flex-col justify-end">
+                            <span class="text-green-400 text-[10px] font-bold uppercase mb-1">Active</span>
+                            <h4 class="text-white text-xl font-bold uppercase">FloraGuard Monitor</h4>
+                        </div>
+                    </div>
+
+                    <div onclick="openProjectModal('tower')" class="group relative rounded-3xl overflow-hidden cursor-pointer shadow-lg hover:shadow-2xl transition-all">
+                        <img src="https://images.unsplash.com/photo-1558449028-b53a39d100fc?auto=format&fit=crop&w=500&q=80" class="w-full h-80 object-cover group-hover:scale-105 transition">
+                        <div class="absolute inset-0 bg-gradient-to-t from-gray-900/80 p-6 flex flex-col justify-end">
+                            <span class="text-blue-400 text-[10px] font-bold uppercase mb-1">Beta</span>
+                            <h4 class="text-white text-xl font-bold uppercase">AeroTower Pro</h4>
+                        </div>
+                    </div>
+
+                    <div onclick="openProjectModal('mesh')" class="group relative rounded-3xl overflow-hidden cursor-pointer shadow-lg hover:shadow-2xl transition-all">
+                        <img src="https://images.unsplash.com/photo-1563514227147-6d2ff665a6a0?auto=format&fit=crop&w=500&q=80" class="w-full h-80 object-cover group-hover:scale-105 transition">
+                        <div class="absolute inset-0 bg-gradient-to-t from-gray-900/80 p-6 flex flex-col justify-end">
+                            <span class="text-purple-400 text-[10px] font-bold uppercase mb-1">Concept</span>
+                            <h4 class="text-white text-xl font-bold uppercase">AquaGrid Mesh</h4>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </section>
+
+    <!-- DASHBOARD PAGE (Hidden until login) -->
+    <section id="dashboard-page" class="hidden-section max-w-7xl mx-auto p-6 animate-fadeIn">
+        <div id="plant-tabs" class="flex gap-2 mb-8 bg-white w-fit p-1.5 rounded-2xl border"></div>
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div class="lg:col-span-2 space-y-6">
+                <div class="bg-white p-8 rounded-[2.5rem] shadow-sm border border-gray-100">
+                    <h2 id="active-plant-name" class="text-4xl font-black mb-6">Monstera</h2>
+                    <div class="grid grid-cols-4 gap-4">
+                        <div class="bg-blue-50 p-4 rounded-3xl text-center"><p class="text-[10px] font-black text-blue-500 uppercase">Soil</p><h4 id="stat-moisture" class="text-2xl font-bold">45%</h4></div>
+                        <div class="bg-orange-50 p-4 rounded-3xl text-center"><p class="text-[10px] font-black text-orange-500 uppercase">Temp</p><h4 id="stat-temp" class="text-2xl font-bold">24°C</h4></div>
+                        <div class="bg-cyan-50 p-4 rounded-3xl text-center"><p class="text-[10px] font-black text-cyan-500 uppercase">Humid</p><h4 id="stat-humidity" class="text-2xl font-bold">60%</h4></div>
+                        <div class="bg-yellow-50 p-4 rounded-3xl text-center"><p class="text-[10px] font-black text-yellow-500 uppercase">Light</p><h4 id="stat-light" class="text-2xl font-bold">800lx</h4></div>
+                    </div>
+                </div>
+                <div class="bg-white p-8 rounded-[2.5rem] shadow-sm h-80 border border-gray-100"><canvas id="moistureChart"></canvas></div>
+            </div>
+            <div class="space-y-6">
+                <div class="bg-green-900 p-8 rounded-[2.5rem] text-white shadow-xl"><p id="health-text" class="italic opacity-80">Everything is optimal.</p></div>
+                <button id="waterBtn" class="w-full bg-blue-600 text-white py-6 rounded-[2rem] font-black shadow-xl">WATER NOW</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- LOGIN PAGE -->
+    <section id="login-page" class="hidden-section flex items-center justify-center py-24">
+        <div class="bg-white w-full max-w-md p-10 rounded-[3rem] shadow-2xl">
+            <h2 class="text-3xl font-black text-center mb-8">Login</h2>
+            <form onsubmit="handleLogin(event)" class="space-y-4">
+                <input type="email" placeholder="Email" class="w-full px-6 py-4 rounded-2xl bg-gray-50 outline-none">
+                <input type="password" placeholder="Password" class="w-full px-6 py-4 rounded-2xl bg-gray-50 outline-none">
+                <button type="submit" class="w-full bg-green-600 text-white py-4 rounded-2xl font-bold shadow-lg">Enter Dashboard</button>
+            </form>
+        </div>
+    </section>
+
+    <script>
+        // --- Project Data ---
+        const projectLibrary = {
+            monitor: {
+                title: "FloraGuard Monitor",
+                badge: "Active Project",
+                badgeColor: "bg-green-600",
+                img: "https://images.unsplash.com/photo-1585320806297-9794b3e4eeae?auto=format&fit=crop&w=800&q=80",
+                desc: "A flagship IoT node designed for indoor plants. It measures environmental vitals in real-time and transmits them via MQTT to our centralized cloud dashboard for AI-driven health analysis.",
+                tech: ["<i class='fas fa-microchip mr-2'></i> ESP32 MCU", "<i class='fas fa-wifi mr-2'></i> MQTT Protocol", "<i class='fas fa-database mr-2'></i> InfluxDB"],
+                features: ["Real-time data logging", "Moisture alert system", "Battery deep-sleep mode"],
+                action: `<button onclick="showPage('dashboard'); closeModal();" class="w-full bg-green-600 text-white py-4 rounded-2xl font-bold">Go to Live Dashboard</button>`
+            },
+            tower: {
+                title: "AeroTower Pro",
+                badge: "Beta Testing",
+                badgeColor: "bg-blue-600",
+                img: "https://images.unsplash.com/photo-1558449028-b53a39d100fc?auto=format&fit=crop&w=800&q=80",
+                desc: "A soil-free vertical farming tower utilizing aeroponics. It uses nutrient-rich mist to grow 48 plants in less than 7 square feet of space, using 95% less water than traditional soil-based systems.",
+                tech: ["<i class='fas fa-tint mr-2'></i> Mist Control API", "<i class='fas fa-lightbulb mr-2'></i> LED Grow Automation", "<i class='fas fa-server mr-2'></i> Docker Container"],
+                features: ["Year-round harvesting", "Auto-pH balancing", "Modular 3D-printed design"],
+                action: `<button class="w-full bg-gray-200 text-gray-500 py-4 rounded-2xl font-bold cursor-not-allowed">Enroll in Beta Program</button>`
+            },
+            mesh: {
+                title: "AquaGrid Mesh",
+                badge: "Conceptual Hub",
+                badgeColor: "bg-purple-600",
+                img: "https://images.unsplash.com/photo-1563514227147-6d2ff665a6a0?auto=format&fit=crop&w=800&q=80",
+                desc: "Designed for large-scale agriculture, AquaGrid creates a wide-area mesh network using LoRaWAN to control hundreds of irrigation valves based on localized soil conditions and weather forecasts.",
+                tech: ["<i class='fas fa-tower-cell mr-2'></i> LoRaWAN Mesh", "<i class='fas fa-cloud-sun mr-2'></i> Weather API Integration", "<i class='fas fa-satellite mr-2'></i> GPS Tagging"],
+                features: ["80km² Coverage area", "Satellite sync", "Predictive leak detection"],
+                action: `<button class="w-full bg-purple-600 text-white py-4 rounded-2xl font-bold">Read Whitepaper</button>`
+            }
+        };
+
+        let isLoggedIn = false;
+        let currentChart = null;
+
+        const plants = [
+            { name: "Monstera", moisture: 45, temp: 24, humidity: 65, light: 820, history: [40, 42, 45, 44, 43, 45] },
+            { name: "Snake Plant", moisture: 18, temp: 22, humidity: 40, light: 300, history: [20, 19, 18, 18, 17, 18] }
+        ];
+
+        // --- Navigation ---
+        function showPage(pageId) {
+            if (pageId === 'dashboard' && !isLoggedIn) return showPage('login');
+            document.querySelectorAll('section').forEach(s => s.id.includes('page') && s.classList.add('hidden-section'));
+            document.getElementById(pageId + '-page').classList.remove('hidden-section');
+            document.getElementById('nav-home').className = (pageId === 'home') ? 'active-link' : 'cursor-pointer hover:text-green-600';
+            document.getElementById('nav-dashboard').className = (pageId === 'dashboard') ? 'active-link' : 'cursor-pointer hover:text-green-600';
+            window.scrollTo(0,0);
+        }
+
+        // --- Modals ---
+        function openProjectModal(id) {
+            const project = projectLibrary[id];
+            document.getElementById('modal-image').style.backgroundImage = `url('${project.img}')`;
+            document.getElementById('modal-title').innerText = project.title;
+            document.getElementById('modal-desc').innerText = project.desc;
+            document.getElementById('modal-badge').innerText = project.badge;
+            document.getElementById('modal-badge').className = `px-3 py-1 rounded-lg text-[10px] font-bold text-white uppercase tracking-widest ${project.badgeColor}`;
+            
+            document.getElementById('modal-tech').innerHTML = project.tech.map(t => `<li class='flex items-center'>${t}</li>`).join('');
+            document.getElementById('modal-features').innerHTML = project.features.map(f => `<li class='flex items-center gap-2'><i class="fas fa-check-circle text-green-500"></i> ${f}</li>`).join('');
+            document.getElementById('modal-action-box').innerHTML = project.action;
+
+            document.getElementById('project-modal').classList.remove('hidden-section');
+        }
+
+        function closeModal() {
+            document.getElementById('project-modal').classList.add('hidden-section');
+        }
+
+        // --- Auth & Data ---
+        function handleLogin(e) { e.preventDefault(); isLoggedIn = true; updateAuthUI(); showPage('dashboard'); }
+        function handleLogout() { isLoggedIn = false; updateAuthUI(); showPage('home'); }
+        function updateAuthUI() {
+            document.getElementById('btn-signin').classList.toggle('hidden-section', isLoggedIn);
+            document.getElementById('logged-in-user').classList.toggle('hidden-section', !isLoggedIn);
+        }
+
+        function init() {
+            const tabs = document.getElementById('plant-tabs');
+            plants.forEach((p, i) => {
+                const b = document.createElement('button');
+                b.className = `px-6 py-2 rounded-xl text-sm font-bold ${i===0?'bg-green-600 text-white':'text-gray-500'}`;
+                b.innerText = p.name;
+                b.onclick = () => {
+                    document.querySelectorAll('#plant-tabs button').forEach(btn => btn.className = 'px-6 py-2 rounded-xl text-sm font-bold text-gray-500');
+                    b.className = 'px-6 py-2 rounded-xl text-sm font-bold bg-green-600 text-white';
+                    updateDashboard(i);
+                };
+                tabs.appendChild(b);
+            });
+            updateDashboard(0);
+        }
+
+        function updateDashboard(idx) {
+            const p = plants[idx];
+            document.getElementById('active-plant-name').innerText = p.name;
+            document.getElementById('stat-moisture').innerText = p.moisture + "%";
+            document.getElementById('stat-temp').innerText = p.temp + "°C";
+            document.getElementById('stat-humidity').innerText = p.humidity + "%";
+            document.getElementById('stat-light').innerText = p.light + " lx";
+            
+            const ctx = document.getElementById('moistureChart').getContext('2d');
+            if(currentChart) currentChart.destroy();
+            currentChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['-5h','-4h','-3h','-2h','-1h','Now'],
+                    datasets: [{ data: p.history, borderColor: '#3b82f6', tension: 0.4, fill: true, backgroundColor: 'rgba(59,130,246,0.05)' }]
+                },
+                options: { responsive: true, maintainAspectRatio: false, plugins: { legend: { display: false } } }
+            });
+        }
+
+        window.onload = init;
+    </script>
+</body>
+</html>
